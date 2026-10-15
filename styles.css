@@ -1,0 +1,1212 @@
+/* ==========================================================================
+   NOTION-STYLE DESIGN SYSTEM & HABIT TRACKER
+   - Authentic Notion workspace aesthetics (Light & Dark)
+   - Clean document layout, subtle dividers, and pastel database tags
+   - Zero-dependency custom SVG analytics (Weekly Bar Chart, Progress Ring, Heatmap)
+   - Zero history / Fresh slate engine
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. NOTION THEME TOKENS
+   -------------------------------------------------------------------------- */
+:root {
+  /* Radii */
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+
+  /* Typography */
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-mono: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace;
+
+  /* LIGHT THEME (Notion Default) */
+  --bg-color: #FFFFFF;
+  --card-bg: #FFFFFF;
+  --card-bg-subtle: #F7F6F3;
+  --card-bg-hover: rgba(55, 53, 47, 0.06);
+  --callout-bg: #F1F1EF;
+
+  --text-main: #37352F;
+  --text-secondary: #5A5751;
+  --text-muted: #787774;
+  --text-placeholder: #9B9A97;
+
+  --border-color: #E9E9E7;
+  --border-subtle: #F1F1EF;
+  --border-hover: #D3D1CB;
+  --border-focus: #2383E2;
+
+  --shadow-sm: 0 1px 2px rgba(15, 15, 15, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 15, 15, 0.06);
+  --shadow-lg: 0 12px 24px rgba(15, 15, 15, 0.08);
+
+  /* Notion Primary & Accent */
+  --accent-primary: #2383E2;       /* Notion Blue */
+  --accent-primary-hover: #1971C2;
+  --accent-success: #0F7B6C;       /* Notion Teal / Green */
+  --accent-success-hover: #0B6B5D;
+
+  /* Notion Tag Colors (Light) */
+  --tag-fitness-bg: #E7F3F8;   --tag-fitness-text: #0B6E99;  /* Blue */
+  --tag-focus-bg: #F4EEF8;     --tag-focus-text: #6940A5;    /* Purple */
+  --tag-health-bg: #EDF3EC;    --tag-health-text: #0F7B6C;   /* Green */
+  --tag-mindset-bg: #FBF3DB;   --tag-mindset-text: #DFAB01;  /* Yellow */
+  --tag-general-bg: #EBECED;   --tag-general-text: #37352F;  /* Gray */
+
+  /* Notion Heatmap Scale (Emerald/Teal) */
+  --heatmap-lvl0: #EBEBEA;
+  --heatmap-lvl1: #C2E3DC;
+  --heatmap-lvl2: #80C8B8;
+  --heatmap-lvl3: #3BA994;
+  --heatmap-lvl4: #0F7B6C;
+
+  /* Chart & Grid */
+  --chart-grid: #EBEBEA;
+  --chart-bar-bg: #2383E2;
+  --chart-bar-hover: #1971C2;
+  --chart-bar-today: #0F7B6C;
+  --chart-target-line: #DFAB01;
+}
+
+/* --------------------------------------------------------------------------
+   DARK THEME (Notion Dark)
+   -------------------------------------------------------------------------- */
+[data-theme="dark"] {
+  --bg-color: #191919;
+  --card-bg: #202020;
+  --card-bg-subtle: #252525;
+  --card-bg-hover: rgba(255, 255, 255, 0.06);
+  --callout-bg: #222222;
+
+  --text-main: #E6E6E6;
+  --text-secondary: #CBD0D6;
+  --text-muted: #9B9B9B;
+  --text-placeholder: #6E6E6E;
+
+  --border-color: #2E2E2E;
+  --border-subtle: #262626;
+  --border-hover: #3E3E3E;
+  --border-focus: #529CCA;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.45);
+
+  --accent-primary: #529CCA;       /* Notion Blue (Dark) */
+  --accent-primary-hover: #69AADB;
+  --accent-success: #4EAA79;       /* Notion Green (Dark) */
+  --accent-success-hover: #63B88C;
+
+  /* Notion Tag Colors (Dark) */
+  --tag-fitness-bg: #24343F;   --tag-fitness-text: #529CCA;
+  --tag-focus-bg: #35293E;     --tag-focus-text: #9A6DD7;
+  --tag-health-bg: #24362E;    --tag-health-text: #4EAA79;
+  --tag-mindset-bg: #3E3725;   --tag-mindset-text: #E2C85C;
+  --tag-general-bg: #2F2F2F;   --tag-general-text: #9B9B9B;
+
+  /* Heatmap Scale in Dark */
+  --heatmap-lvl0: #262626;
+  --heatmap-lvl1: #1B382F;
+  --heatmap-lvl2: #245744;
+  --heatmap-lvl3: #358260;
+  --heatmap-lvl4: #4EAA79;
+
+  /* Chart & Grid */
+  --chart-grid: #2A2A2A;
+  --chart-bar-bg: #529CCA;
+  --chart-bar-hover: #69AADB;
+  --chart-bar-today: #4EAA79;
+  --chart-target-line: #E2C85C;
+}
+
+/* --------------------------------------------------------------------------
+   2. GLOBAL RESETS & NOTION BASE
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Notion Page Container */
+.notion-page-container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 32px 36px 80px;
+}
+
+/* --------------------------------------------------------------------------
+   3. NOTION PAGE HEADER & BREADCRUMBS
+   -------------------------------------------------------------------------- */
+.notion-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.notion-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.breadcrumb-item {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.breadcrumb-separator {
+  color: var(--text-placeholder);
+}
+
+.breadcrumb-current {
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.notion-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Notion Page Title & Icon */
+.notion-hero-header {
+  margin-bottom: 24px;
+}
+
+.notion-page-icon {
+  font-size: 2.75rem;
+  line-height: 1;
+  margin-bottom: 12px;
+  display: inline-block;
+  user-select: none;
+  transition: transform 0.15s ease;
+}
+
+.notion-page-icon:hover {
+  transform: scale(1.08);
+}
+
+.notion-page-title {
+  font-size: 2.125rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-main);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.notion-page-description {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Notion Callout Box */
+.notion-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  background-color: var(--callout-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  margin-bottom: 28px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.callout-icon {
+  font-size: 1.125rem;
+  flex-shrink: 0;
+  line-height: 1.3;
+}
+
+.callout-body {
+  color: var(--text-secondary);
+}
+
+.callout-body strong {
+  color: var(--text-main);
+}
+
+/* --------------------------------------------------------------------------
+   4. NOTION THEME TOGGLE & HEADER BUTTONS
+   -------------------------------------------------------------------------- */
+.notion-btn {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.notion-btn:hover {
+  background-color: var(--card-bg-hover);
+  color: var(--text-main);
+  border-color: var(--border-hover);
+}
+
+.notion-btn.btn-primary {
+  background-color: var(--accent-primary);
+  color: #FFFFFF;
+  border-color: var(--accent-primary);
+  font-weight: 600;
+}
+
+.notion-btn.btn-primary:hover {
+  background-color: var(--accent-primary-hover);
+  border-color: var(--accent-primary-hover);
+}
+
+.notion-btn.btn-ghost {
+  border-color: transparent;
+}
+
+.notion-btn.btn-ghost:hover {
+  background-color: var(--card-bg-hover);
+}
+
+/* SPEC 1: Notion-Style Theme Toggle Switch */
+.notion-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.notion-toggle-switch {
+  display: flex;
+  align-items: center;
+  width: 48px;
+  height: 24px;
+  background-color: var(--border-hover);
+  border-radius: var(--radius-full);
+  padding: 2px;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.notion-toggle-thumb {
+  width: 20px;
+  height: 20px;
+  background-color: #FFFFFF;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#theme-checkbox:checked + .notion-toggle-switch {
+  background-color: var(--accent-primary);
+}
+
+#theme-checkbox:checked + .notion-toggle-switch .notion-toggle-thumb {
+  transform: translateX(24px);
+  background-color: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   5. NOTION METRICS SUMMARY BAR
+   -------------------------------------------------------------------------- */
+.notion-summary-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 900px) {
+  .notion-summary-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .notion-summary-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.notion-metric-box {
+  padding: 14px 16px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.notion-metric-box:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.metric-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metric-pill {
+  font-size: 0.6875rem;
+  padding: 1px 6px;
+  border-radius: var(--radius-xs);
+  background-color: var(--card-bg-subtle);
+  color: var(--text-muted);
+}
+
+.metric-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.metric-number {
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.1;
+}
+
+.metric-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.metric-progress-line {
+  height: 3px;
+  background-color: var(--border-color);
+  border-radius: var(--radius-full);
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.metric-progress-fill {
+  height: 100%;
+  background-color: var(--accent-success);
+  transition: width 0.3s ease;
+}
+
+/* --------------------------------------------------------------------------
+   6. MAIN WORKSPACE GRID
+   -------------------------------------------------------------------------- */
+.notion-workspace-grid {
+  display: grid;
+  grid-template-columns: 440px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .notion-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.workspace-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Notion Block Containers */
+.notion-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  transition: border-color 0.15s ease;
+}
+
+.notion-card:hover {
+  border-color: var(--border-hover);
+}
+
+.notion-section-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* --------------------------------------------------------------------------
+   7. NOTION HABIT CHECKLIST (DATABASE VIEW)
+   -------------------------------------------------------------------------- */
+.notion-filter-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  scrollbar-width: none;
+}
+.notion-filter-tabs::-webkit-scrollbar { display: none; }
+
+.notion-filter-pill {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  background-color: transparent;
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.notion-filter-pill:hover {
+  background-color: var(--card-bg-hover);
+  color: var(--text-main);
+}
+
+.notion-filter-pill.active {
+  background-color: var(--card-bg-subtle);
+  color: var(--text-main);
+  border-color: var(--border-color);
+  font-weight: 600;
+}
+
+/* Habit List Container */
+.habit-items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+  min-height: 120px;
+}
+
+/* Notion List Row */
+.habit-row-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  transition: background-color 0.12s ease;
+}
+
+.habit-row-item:hover {
+  background-color: var(--card-bg-hover);
+}
+
+.habit-row-item.is-completed .habit-name {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.habit-left-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* SPEC 1: Notion Custom Checkbox UI */
+.neo-checkbox-container {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+}
+
+.neo-checkbox-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.neo-checkbox-custom {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--border-hover);
+  border-radius: var(--radius-xs);
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.neo-check-icon {
+  width: 12px;
+  height: 12px;
+  stroke: #FFFFFF;
+  stroke-width: 2.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: all 0.15s ease;
+}
+
+.neo-checkbox-container:hover .neo-checkbox-custom {
+  border-color: var(--text-muted);
+  background-color: var(--card-bg-hover);
+}
+
+.neo-checkbox-input:checked + .neo-checkbox-custom {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.neo-checkbox-input:checked + .neo-checkbox-custom .neo-check-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Habit text info */
+.habit-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.habit-name {
+  font-size: 0.875rem;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+.habit-sub-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1px;
+}
+
+/* Notion Tag Pills */
+.habit-tag {
+  font-size: 0.6875rem;
+  padding: 1px 6px;
+  border-radius: var(--radius-xs);
+  font-weight: 500;
+}
+
+.tag-fitness { background-color: var(--tag-fitness-bg); color: var(--tag-fitness-text); }
+.tag-focus   { background-color: var(--tag-focus-bg);   color: var(--tag-focus-text); }
+.tag-health  { background-color: var(--tag-health-bg);  color: var(--tag-health-text); }
+.tag-mindset { background-color: var(--tag-mindset-bg); color: var(--tag-mindset-text); }
+
+.habit-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.habit-streak-badge {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  background-color: var(--card-bg-subtle);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.habit-delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-xs);
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 0.15s, background-color 0.15s;
+}
+
+.habit-row-item:hover .habit-delete-btn {
+  opacity: 0.7;
+}
+
+.habit-delete-btn:hover {
+  opacity: 1;
+  background-color: var(--card-bg-hover);
+  color: #E03E3E;
+}
+
+/* Empty habits state */
+.notion-empty-state {
+  text-align: center;
+  padding: 28px 16px;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-sm);
+}
+
+.habits-footer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.footer-hint {
+  font-size: 0.75rem;
+  color: var(--text-placeholder);
+}
+
+/* --------------------------------------------------------------------------
+   8. SPEC 2: NOTION PROGRESS RING & LINEAR BAR
+   -------------------------------------------------------------------------- */
+.progress-ring-content {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.svg-ring-wrapper {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  flex-shrink: 0;
+}
+
+.neo-progress-svg {
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+
+.ring-bg-track {
+  fill: none;
+  stroke: var(--card-bg-subtle);
+  stroke-width: 10px;
+}
+
+.ring-progress-bar {
+  fill: none;
+  stroke: var(--accent-success);
+  stroke-width: 10px;
+  stroke-linecap: round;
+  stroke-dasharray: 477.52;
+  stroke-dashoffset: 477.52;
+  transition: stroke-dashoffset 0.5s ease, stroke 0.2s ease;
+}
+
+.ring-center-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.ring-percentage {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1;
+}
+
+.ring-label {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.ring-details-panel {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.progress-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+}
+
+.details-title {
+  color: var(--text-secondary);
+}
+
+.details-fraction {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* Notion Database Style Progress Bar */
+.neo-chunky-progress-bar {
+  height: 8px;
+  background-color: var(--card-bg-subtle);
+  border-radius: var(--radius-full);
+  position: relative;
+  overflow: hidden;
+}
+
+.chunky-fill {
+  height: 100%;
+  background-color: var(--accent-success);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.status-motivation-callout {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  background-color: var(--card-bg-subtle);
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-subtle);
+}
+
+/* --------------------------------------------------------------------------
+   9. SPEC 2: NOTION WEEKLY BAR CHART (PURE SVG)
+   -------------------------------------------------------------------------- */
+.chart-legend {
+  display: flex;
+  gap: 14px;
+}
+
+.legend-chip {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend-color-box {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-xs);
+}
+.completed-box { background-color: var(--chart-bar-bg); }
+.target-box { background-color: var(--chart-target-line); }
+
+.svg-chart-container {
+  width: 100%;
+  min-height: 220px;
+  position: relative;
+}
+
+.neo-chart-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.chart-grid-line {
+  stroke: var(--chart-grid);
+  stroke-width: 1px;
+  stroke-dasharray: 3 3;
+}
+
+.chart-target-line {
+  stroke: var(--chart-target-line);
+  stroke-width: 1px;
+  stroke-dasharray: 4 3;
+}
+
+.chart-axis-line {
+  stroke: var(--border-color);
+  stroke-width: 1px;
+}
+
+.chart-axis-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--text-muted);
+}
+
+.chart-bar-group {
+  cursor: pointer;
+}
+
+.chart-bar-rect {
+  fill: var(--chart-bar-bg);
+  rx: 4px;
+  ry: 4px;
+  transition: fill 0.15s ease, opacity 0.15s ease;
+}
+
+.chart-bar-group:hover .chart-bar-rect {
+  fill: var(--chart-bar-hover);
+  opacity: 0.85;
+}
+
+.chart-bar-value-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  fill: var(--text-muted);
+  text-anchor: middle;
+}
+
+.chart-day-label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  fill: var(--text-muted);
+  text-anchor: middle;
+}
+
+.chart-day-today {
+  fill: var(--accent-primary);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   10. SPEC 2: NOTION STREAK HEATMAP (ZERO HISTORY STARTER)
+   -------------------------------------------------------------------------- */
+.heatmap-stats-pill {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  background-color: var(--card-bg-subtle);
+  color: var(--text-muted);
+}
+
+.heatmap-scroll-wrapper {
+  overflow-x: auto;
+  padding: 6px 0 12px;
+}
+.heatmap-scroll-wrapper::-webkit-scrollbar { height: 4px; }
+.heatmap-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: var(--radius-full);
+}
+
+.heatmap-matrix-board {
+  display: flex;
+  gap: 4px;
+  min-width: 660px;
+}
+
+.heatmap-day-labels-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 20px;
+  margin-right: 4px;
+}
+
+.heatmap-day-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  height: 14px;
+  line-height: 14px;
+  text-align: right;
+  width: 18px;
+}
+
+.heatmap-week-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.heatmap-month-header {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  height: 16px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+/* Notion Matrix Tile */
+.heatmap-cell {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.15s ease;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.3);
+  z-index: 10;
+}
+
+.heatmap-cell.is-today {
+  outline: 1.5px solid var(--accent-primary);
+  outline-offset: 1px;
+}
+
+.heatmap-cell.lvl-0, .legend-cell.lvl-0 { background-color: var(--heatmap-lvl0); }
+.heatmap-cell.lvl-1, .legend-cell.lvl-1 { background-color: var(--heatmap-lvl1); }
+.heatmap-cell.lvl-2, .legend-cell.lvl-2 { background-color: var(--heatmap-lvl2); }
+.heatmap-cell.lvl-3, .legend-cell.lvl-3 { background-color: var(--heatmap-lvl3); }
+.heatmap-cell.lvl-4, .legend-cell.lvl-4 { background-color: var(--heatmap-lvl4); }
+
+.heatmap-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-label {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}
+
+.legend-cell {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+}
+
+.heatmap-tip-hint {
+  font-size: 0.75rem;
+  color: var(--text-placeholder);
+}
+
+/* --------------------------------------------------------------------------
+   11. NOTION TOOLTIP & MODAL DIALOG
+   -------------------------------------------------------------------------- */
+.neo-tooltip {
+  position: fixed;
+  pointer-events: none;
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  white-space: pre-line;
+}
+
+.neo-tooltip.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Notion Page Popup Modal */
+.neo-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 15, 15, 0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  padding: 16px;
+}
+
+.neo-modal-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.neo-modal-dialog {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 460px;
+  padding: 24px;
+  transform: scale(0.97);
+  transition: transform 0.15s ease;
+}
+
+.neo-modal-backdrop.is-open .neo-modal-dialog {
+  transform: scale(1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 4px;
+  border-radius: var(--radius-xs);
+}
+
+.modal-close-btn:hover {
+  background-color: var(--card-bg-hover);
+  color: var(--text-main);
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.neo-input, .neo-select {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xs);
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.neo-input:focus, .neo-select:focus {
+  border-color: var(--border-focus);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+  .notion-page-container {
+    padding: 20px 16px 60px;
+  }
+  .notion-top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .notion-top-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

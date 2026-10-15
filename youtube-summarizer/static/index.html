@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Video Summarizer</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Marked.js for Markdown Rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- DOMPurify for safe HTML -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body class="bg-zinc-950 text-zinc-200 min-h-screen font-sans antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- Header / Navigation -->
+  <header class="border-b border-zinc-800 bg-zinc-950/80 sticky top-0 z-40 backdrop-blur-sm">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      
+      <!-- Brand -->
+      <a href="/" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center text-white shadow-sm">
+          <i data-lucide="play" class="w-4 h-4 fill-current ml-0.5"></i>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-semibold text-sm sm:text-base text-zinc-100 tracking-tight">YouTube Summarizer</span>
+          <span class="text-[11px] text-zinc-500 font-mono hidden sm:inline">v1.0</span>
+        </div>
+      </a>
+
+      <!-- Right Actions (Status + Settings) -->
+      <div class="flex items-center gap-2.5">
+        <!-- API Key Status Badge -->
+        <button id="apiKeyStatusBtn" class="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-300 transition">
+          <span id="apiKeyDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+          <span id="apiKeyLabel">Checking Key...</span>
+        </button>
+
+        <!-- Settings Button -->
+        <button id="openSettingsBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 hover:text-zinc-100 text-xs font-medium transition" title="API Settings">
+          <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+          <span>Settings</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    
+    <!-- Hero / Headline -->
+    <div class="mb-8">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-100">
+        Summarize YouTube Videos
+      </h1>
+      <p class="text-sm text-zinc-400 mt-1.5 leading-relaxed">
+        Paste any video link to extract subtitles and generate an executive briefing, key takeaways, and notes.
+      </p>
+    </div>
+
+    <!-- Main Input Box Card -->
+    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 sm:p-5 shadow-sm mb-6">
+      
+      <form id="summarizeForm" class="space-y-4">
+        
+        <!-- URL Input Group -->
+        <div class="relative flex items-center">
+          <div class="absolute left-3.5 pointer-events-none text-zinc-500">
+            <i data-lucide="link" class="w-4 h-4"></i>
+          </div>
+          
+          <input
+            type="text"
+            id="videoUrl"
+            placeholder="Paste YouTube link (e.g., https://www.youtube.com/watch?v=...)"
+            class="w-full pl-10 pr-24 py-2.5 bg-zinc-950 border border-zinc-700/80 rounded-lg text-zinc-100 placeholder-zinc-500 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition"
+            required
+            autocomplete="off"
+          />
+
+          <!-- Quick Paste & Clear Buttons -->
+          <div class="absolute right-2 flex items-center gap-1">
+            <button
+              type="button"
+              id="pasteBtn"
+              class="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-zinc-100 text-xs font-medium transition flex items-center gap-1 border border-zinc-700/60"
+              title="Paste from clipboard"
+            >
+              <i data-lucide="clipboard" class="w-3 h-3"></i>
+              <span class="hidden sm:inline">Paste</span>
+            </button>
+            <button
+              type="button"
+              id="clearBtn"
+              class="hidden p-1 rounded text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition"
+              title="Clear input"
+            >
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Options Controls Row -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+          
+          <!-- Mode Segmented Control -->
+          <div class="flex items-center bg-zinc-950 p-1 rounded-lg border border-zinc-800 text-xs">
+            <button
+              type="button"
+              class="summary-type-btn px-3 py-1.5 rounded-md transition text-zinc-400 hover:text-zinc-200"
+              data-type="tldr"
+            >
+              Quick TL;DR
+            </button>
+            <button
+              type="button"
+              class="summary-type-btn active px-3 py-1.5 rounded-md bg-zinc-800 text-zinc-100 font-medium border border-zinc-700/60 shadow-sm transition"
+              data-type="standard"
+            >
+              Executive Summary
+            </button>
+            <button
+              type="button"
+              class="summary-type-btn px-3 py-1.5 rounded-md transition text-zinc-400 hover:text-zinc-200"
+              data-type="detailed"
+            >
+              In-Depth Analysis
+            </button>
+          </div>
+
+          <!-- Language Selector -->
+          <div class="flex items-center gap-2 text-xs">
+            <label for="languageSelect" class="text-zinc-400 font-medium">Language:</label>
+            <select
+              id="languageSelect"
+              class="bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="English" selected>English</option>
+              <option value="Spanish">Spanish</option>
+              <option value="French">French</option>
+              <option value="German">German</option>
+              <option value="Hindi">Hindi</option>
+              <option value="Japanese">Japanese</option>
+              <option value="Portuguese">Portuguese</option>
+              <option value="Chinese">Chinese</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          id="submitBtn"
+          class="w-full py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-medium text-sm shadow-sm flex items-center justify-center gap-2 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span id="submitBtnText">Generate Summary</span>
+        </button>
+
+      </form>
+
+      <!-- Clean Example Links -->
+      <div class="mt-3.5 pt-3.5 border-t border-zinc-800/80 flex flex-wrap items-center gap-2 text-xs text-zinc-400">
+        <span class="text-zinc-500">Examples:</span>
+        <button
+          type="button"
+          class="sample-chip text-zinc-400 hover:text-blue-400 underline underline-offset-2 transition"
+          data-url="https://www.youtube.com/watch?v=UF8uR6Z6KLc"
+        >
+          Steve Jobs Stanford Speech
+        </button>
+        <span class="text-zinc-700">•</span>
+        <button
+          type="button"
+          class="sample-chip text-zinc-400 hover:text-blue-400 underline underline-offset-2 transition"
+          data-url="https://www.youtube.com/watch?v=aircAruvnKk"
+        >
+          Neural Networks (3Blue1Brown)
+        </button>
+        <span class="text-zinc-700">•</span>
+        <button
+          type="button"
+          class="sample-chip text-zinc-400 hover:text-blue-400 underline underline-offset-2 transition"
+          data-url="https://www.youtube.com/watch?v=jNQXAC9IVRw"
+        >
+          First YouTube Video
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Video Preview Card (Compact & Clean) -->
+    <div id="videoPreviewCard" class="hidden mb-6 p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center gap-3.5">
+      <img
+        id="videoThumbnail"
+        src=""
+        alt="Video thumbnail"
+        class="w-28 sm:w-36 aspect-video object-cover rounded-md border border-zinc-800 shrink-0"
+      />
+      <div class="flex-1 min-w-0 space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] font-mono uppercase text-zinc-400 bg-zinc-800 px-1.5 py-0.5 rounded border border-zinc-700/60">YouTube</span>
+          <span id="previewAuthor" class="text-xs text-zinc-400 truncate"></span>
+        </div>
+        <h3 id="previewTitle" class="text-sm font-semibold text-zinc-100 truncate"></h3>
+        <div>
+          <a id="previewExternalLink" href="#" target="_blank" class="inline-flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition">
+            <span>Open on YouTube</span>
+            <i data-lucide="external-link" class="w-3 h-3"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State Card (Clean & Minimalist) -->
+    <div id="loadingCard" class="hidden mb-6 rounded-xl bg-zinc-900 border border-zinc-800 overflow-hidden shadow-sm">
+      <div class="relative h-1 w-full bg-zinc-800 overflow-hidden">
+        <div class="animate-indeterminate"></div>
+      </div>
+      <div class="p-6 text-center space-y-1.5">
+        <p id="loadingTitle" class="text-sm font-semibold text-zinc-100">Processing video...</p>
+        <p id="loadingSubtext" class="text-xs text-zinc-400">Extracting subtitles and generating summary.</p>
+      </div>
+    </div>
+
+    <!-- Error Alert Card -->
+    <div id="errorCard" class="hidden mb-6 p-4 rounded-lg bg-red-950/20 border border-red-900/40 text-red-200 flex items-start gap-3">
+      <i data-lucide="alert-circle" class="w-4 h-4 text-red-400 shrink-0 mt-0.5"></i>
+      <div class="flex-1 text-xs space-y-1">
+        <h4 class="font-semibold text-red-300" id="errorTitle">Unable to generate summary</h4>
+        <p class="text-zinc-300 leading-relaxed" id="errorMessage"></p>
+        <div id="errorAction" class="pt-2 hidden">
+          <button id="errorActionBtn" class="px-3 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 font-medium text-xs transition">
+            Configure API Key
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsCard" class="hidden space-y-4">
+      
+      <!-- Top Info & Export Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-lg bg-zinc-900 border border-zinc-800 text-xs">
+        <div class="flex items-center gap-3 text-zinc-400">
+          <span>Transcript: <strong id="statWordCount" class="text-zinc-200 font-medium">0</strong> words</span>
+          <span>•</span>
+          <span>Read time: ~<strong id="statReadTime" class="text-zinc-200 font-medium">0</strong> min</span>
+          <span>•</span>
+          <span id="statModel" class="text-zinc-400 font-mono text-[11px]">Gemini</span>
+        </div>
+
+        <!-- Export Buttons -->
+        <div class="flex items-center gap-2">
+          <button
+            id="copySummaryBtn"
+            class="px-2.5 py-1.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium border border-zinc-700 flex items-center gap-1.5 transition"
+            title="Copy markdown"
+          >
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span id="copyBtnText">Copy</span>
+          </button>
+          
+          <button
+            id="downloadMarkdownBtn"
+            class="px-2.5 py-1.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium border border-zinc-700 flex items-center gap-1.5 transition"
+            title="Download as Markdown file"
+          >
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Export .md</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div class="flex border-b border-zinc-800 text-xs">
+        <button
+          id="tabSummaryBtn"
+          class="tab-btn active px-4 py-2.5 font-medium border-b-2 border-blue-500 text-zinc-100 flex items-center gap-2 transition"
+        >
+          <i data-lucide="file-text" class="w-3.5 h-3.5 text-blue-400"></i>
+          <span>Summary</span>
+        </button>
+        <button
+          id="tabTranscriptBtn"
+          class="tab-btn px-4 py-2.5 font-medium border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 flex items-center gap-2 transition"
+        >
+          <i data-lucide="align-left" class="w-3.5 h-3.5"></i>
+          <span>Full Transcript</span>
+        </button>
+      </div>
+
+      <!-- Tab 1: AI Summary Content -->
+      <div id="tabSummaryContent" class="p-5 sm:p-7 rounded-xl bg-zinc-900 border border-zinc-800 shadow-sm">
+        <div id="summaryMarkdown" class="prose max-w-none">
+          <!-- Rendered Markdown will be injected here -->
+        </div>
+      </div>
+
+      <!-- Tab 2: Full Transcript Content -->
+      <div id="tabTranscriptContent" class="hidden p-5 rounded-xl bg-zinc-900 border border-zinc-800 shadow-sm space-y-3">
+        
+        <!-- Search within Transcript -->
+        <div class="relative">
+          <i data-lucide="search" class="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-2.5"></i>
+          <input
+            type="text"
+            id="transcriptSearch"
+            placeholder="Search transcript..."
+            class="w-full pl-9 pr-3 py-1.5 bg-zinc-950 border border-zinc-800 rounded-md text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
+
+        <!-- Transcript Timeline Items -->
+        <div id="transcriptContainer" class="space-y-1 max-h-[500px] overflow-y-auto pr-1 font-mono text-xs">
+          <!-- Segments will be inserted here -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Settings Modal (Clean & Functional) -->
+  <div id="settingsModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-xl max-w-md w-full p-5 shadow-xl space-y-4">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-zinc-800">
+        <div>
+          <h3 class="font-semibold text-zinc-100 text-sm">Settings</h3>
+          <p class="text-xs text-zinc-400">Configure your Google Gemini API credentials</p>
+        </div>
+        <button id="closeSettingsBtn" class="text-zinc-400 hover:text-zinc-200 p-1 rounded-md hover:bg-zinc-800 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-medium text-zinc-300 mb-1">
+            Gemini API Key
+          </label>
+          <div class="relative">
+            <input
+              type="password"
+              id="geminiKeyInput"
+              placeholder="AIzaSy..."
+              class="w-full px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-md text-zinc-100 placeholder-zinc-600 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            />
+            <button
+              type="button"
+              id="toggleKeyVisibility"
+              class="absolute right-2.5 top-2 text-zinc-500 hover:text-zinc-300"
+            >
+              <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+          <p class="text-[11px] text-zinc-500 mt-1">
+            Free key from
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-blue-400 hover:underline">
+              Google AI Studio
+            </a>
+          </p>
+        </div>
+
+        <div>
+          <label class="block font-medium text-zinc-300 mb-1">
+            Model
+          </label>
+          <select
+            id="modelSelect"
+            class="w-full px-2.5 py-1.5 bg-zinc-950 border border-zinc-700 rounded-md text-zinc-200 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="gemini-2.5-flash" selected>gemini-2.5-flash (Recommended)</option>
+            <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+            <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+          </select>
+        </div>
+
+        <p class="text-[11px] text-zinc-500 pt-1 border-t border-zinc-800">
+          Keys are saved locally in your browser's private storage or can be specified in the server's <code class="text-zinc-300">.env</code> file.
+        </p>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-zinc-800">
+        <button
+          type="button"
+          id="clearApiKeyBtn"
+          class="px-3 py-1.5 rounded-md text-xs text-zinc-400 hover:text-red-400 hover:bg-zinc-800 transition"
+        >
+          Clear Key
+        </button>
+        <button
+          type="button"
+          id="saveSettingsBtn"
+          class="px-4 py-1.5 rounded-md text-xs font-medium bg-blue-600 hover:bg-blue-500 text-white transition"
+        >
+          Save
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Application Script -->
+  <script src="/static/app.js"></script>
+</body>
+</html>
