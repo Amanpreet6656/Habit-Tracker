@@ -1,48 +1,34 @@
-# 🎯 Habit Tracker — Notion Workspace Edition
+# Habit Tracker: Notion Workspace Edition
 
-A distraction-free, Notion-styled daily habit tracker and visual analytics dashboard configured with **zero prior history** so you can start tracking with a completely clean slate.
+A daily habit tracking dashboard and visual analytics interface built with a Notion-inspired design system. The application initializes with a strictly empty dataset to ensure tracking metrics reflect only actual user input.
 
----
+## Design System and UI Components
 
-## 🖤 Notion Aesthetic & Workspace Design
+The application interface replicates the Notion workspace aesthetic, utilizing a precise color palette and structural components:
 
-- **Authentic Notion Palette**:
-  - **Light Mode**: Pure `#FFFFFF` background, `#F7F6F3` secondary surfaces, `#E9E9E7` borders, `#37352F` primary text, and `#787774` muted text.
-  - **Dark Mode**: Pitch-comfortable `#191919` dark canvas, `#202020` elevated surfaces, `#2E2E2E` borders, and `#E6E6E6` primary text.
-- **Notion UI Components**:
-  - **Breadcrumb Navigation**: `Workspace / 🎯 Personal / Habit Tracker`
-  - **Hero Header**: Page icon (`🎯`), title, and description.
-  - **Callout Block**: Clean `💡` callout note for workspace guidance.
-  - **Database Property Tags**: Pastel color chips for categories (Blue for Fitness, Purple for Focus, Green for Health, Yellow for Mindset).
-  - **Custom Notion Checkboxes**: 18px rounded square checkboxes with animated checkmarks and subtle strikethrough effect.
-  - **Notion-Style Theme Switch**: Sleek pill toggle switch for Light ⇄ Dark switching.
+* **Light Mode:** `#FFFFFF` background, `#F7F6F3` secondary surfaces, `#E9E9E7` borders, `#37352F` primary text, and `#787774` muted text.
+* **Dark Mode:** `#191919` canvas, `#202020` elevated surfaces, `#2E2E2E` borders, and `#E6E6E6` primary text.
+* **Core Components:**
+  * Structural navigation via workspace breadcrumbs.
+  * Standardized page headers and callout blocks for contextual guidance.
+  * Database property tags for habit categorization (Fitness, Focus, Health, and Mindset).
+  * Custom 18px rounded square checkboxes featuring state-based strikethrough formatting.
+  * Standard toggle switch for Light and Dark theme selection.
 
----
+## Data Architecture and Analytics
 
-## ⚡ Zero History Clean-Slate Architecture
+The application operates on a zero-history architecture, requiring no external dependencies for data visualization. 
 
-- **Fresh Start**: No fake 90-day history. All past days start at 0% / empty.
-- **Real-Time Organic Growth**:
-  - Daily progress ring and linear progress bar start at 0% today.
-  - As you check off habits, today's metrics, weekly bar chart, and heatmap matrix update dynamically.
-  - Streaks and all-time check-in stats reflect only your actual logged activity.
-- **Reset Option**: Use the `↺ Reset to Zero` button anytime to clear logged history and return to a fresh slate.
+* **State Initialization:** All historical datasets start empty. Streaks and all-time check-in statistics calculate dynamically based on active daily logging.
+* **Daily Metrics:** Real-time computation displayed via a circular progress ring and a linear database progress bar.
+* **Weekly Aggregation:** Rendered via a native SVG bar chart incorporating axis gridlines and a static 80% target threshold line.
+* **Long-Term Consistency:** A 14-week (98-day) chronological heatmap matrix that populates proportionally to logged activity.
+* **Interactive Feedback:** Synthesized sine wave auditory confirmation on checkbox state changes, with user toggle functionality.
+* **Data Management:** A hard reset function allows the user to clear all logged history arrays and return the interface to a base state.
 
----
+## Local Execution
 
-## 📊 Analytics Features (Zero Dependencies)
+To run the application locally, initialize a local web server in the project directory:
 
-1. **Today's Completion**: Circular progress ring & Notion-style database progress bar.
-2. **Weekly Habit Bar Chart**: Pure SVG bar chart with rounded tops, gridlines, and an 80% target line.
-3. **Consistency Heatmap**: 14-week (98-day) block matrix that fills in organically as you build your habits.
-4. **Soft Audio Feedback**: Subtle sine wave tap upon checking or unchecking habits (toggleable).
-
----
-
-## 💻 How to Run
-
-Open [**`index.html`**](file:///c:/Users/amanp/Downloads/habit%20tracker/index.html) in your browser:
-```powershell
+```bash
 python -m http.server 8000
-```
-Then visit `http://localhost:8000`.
