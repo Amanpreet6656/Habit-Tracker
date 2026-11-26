@@ -6,9 +6,7 @@
 (function () {
   'use strict';
 
-  // -------------------------------------------------------------------------
   // STORAGE KEYS (Fresh namespace ensures ZERO leftover demo history)
-  // -------------------------------------------------------------------------
   const STORAGE_KEY_HABITS = 'notion_habits_v4_clean';
   const STORAGE_KEY_HISTORY = 'notion_history_v4_clean';
   const STORAGE_KEY_THEME = 'notion_theme_v4_pref';
@@ -17,9 +15,7 @@
   const CIRCLE_RADIUS = 76;
   const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS; // ~477.52
 
-  // -------------------------------------------------------------------------
   // SUBTLE AUDIO FEEDBACK (Notion-style soft tap)
-  // -------------------------------------------------------------------------
   let audioCtx = null;
   let sfxEnabled = true;
 
@@ -66,9 +62,7 @@
     } catch (e) {}
   }
 
-  // -------------------------------------------------------------------------
   // DATE HELPERS
-  // -------------------------------------------------------------------------
   function formatDateKey(date) {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -85,9 +79,7 @@
     return date.toLocaleDateString('en-US', options);
   }
 
-  // -------------------------------------------------------------------------
   // INITIAL CLEAN STATE (ZERO HISTORY)
-  // -------------------------------------------------------------------------
   const DEFAULT_CLEAN_HABITS = [
     {
       id: 'h1',
@@ -132,9 +124,7 @@
     return {};
   }
 
-  // -------------------------------------------------------------------------
   // APP STATE
-  // -------------------------------------------------------------------------
   let state = {
     theme: 'light',
     activeFilter: 'all',
@@ -194,9 +184,7 @@
     }
   }
 
-  // -------------------------------------------------------------------------
   // NOTION THEME ENGINE
-  // -------------------------------------------------------------------------
   function applyTheme(theme) {
     state.theme = theme;
     document.documentElement.setAttribute('data-theme', theme);
@@ -249,9 +237,7 @@
     updateLabel();
   }
 
-  // -------------------------------------------------------------------------
   // NOTION PROGRESS RING & LINEAR BAR
-  // -------------------------------------------------------------------------
   function updateProgressRingAndBar() {
     const total = state.habits.length;
     const completed = state.habits.filter(h => h.completedToday).length;
@@ -333,9 +319,7 @@
     if (statTotalCompletions) statTotalCompletions.textContent = totalCheckins;
   }
 
-  // -------------------------------------------------------------------------
   // NOTION WEEKLY BAR CHART (PURE SVG)
-  // -------------------------------------------------------------------------
   function renderWeeklyBarChart() {
     const container = document.getElementById('weekly-barchart-container');
     if (!container) return;
@@ -462,9 +446,7 @@
     });
   }
 
-  // -------------------------------------------------------------------------
   // NOTION STREAK HEATMAP (ZERO HISTORY STARTER)
-  // -------------------------------------------------------------------------
   function renderHeatmapMatrix() {
     const board = document.getElementById('heatmap-board');
     if (!board) return;
@@ -608,9 +590,7 @@
     });
   }
 
-  // -------------------------------------------------------------------------
   // HABITS CHECKLIST RENDERING
-  // -------------------------------------------------------------------------
   function renderHabitsList() {
     const container = document.getElementById('habits-list');
     if (!container) return;
@@ -738,9 +718,7 @@
     });
   }
 
-  // -------------------------------------------------------------------------
   // NOTION MODAL DIALOG
-  // -------------------------------------------------------------------------
   function setupModal() {
     const modal = document.getElementById('add-habit-modal');
     const openBtn = document.getElementById('open-add-habit-btn');
@@ -810,9 +788,7 @@
     }
   }
 
-  // -------------------------------------------------------------------------
   // CLEAN SLATE RESET / ZERO HISTORY CONTROLS
-  // -------------------------------------------------------------------------
   function setupZeroHistoryControls() {
     const clearBtn = document.getElementById('reset-demo-data-btn');
     if (!clearBtn) return;
@@ -851,9 +827,7 @@
     return div.innerHTML;
   }
 
-  // -------------------------------------------------------------------------
   // INITIALIZATION
-  // -------------------------------------------------------------------------
   function init() {
     loadState();
     updateDateHeader();

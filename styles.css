@@ -453,7 +453,7 @@ body {
 
 @media (max-width: 1024px) {
   .notion-workspace-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -461,6 +461,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* Notion Block Containers */
@@ -469,6 +471,8 @@ body {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 20px;
+  min-width: 0;
+  max-width: 100%;
   transition: border-color 0.15s ease;
 }
 
@@ -489,6 +493,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 1px solid var(--border-subtle);
@@ -950,6 +956,7 @@ body {
 
 .heatmap-scroll-wrapper {
   overflow-x: auto;
+  max-width: 100%;
   padding: 6px 0 12px;
 }
 .heatmap-scroll-wrapper::-webkit-scrollbar { height: 4px; }
@@ -1207,6 +1214,22 @@ body {
   }
   .notion-top-actions {
     width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
     justify-content: space-between;
+  }
+  .notion-card {
+    padding: 16px;
+  }
+  .ring-details-panel {
+    min-width: 0;
+    width: 100%;
+  }
+  .svg-chart-container {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
   }
 }

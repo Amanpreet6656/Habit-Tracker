@@ -32,3 +32,7 @@ To run the application locally, initialize a local web server in the project dir
 
 ```bash
 python -m http.server 8000
+```
+
+Then open `http://localhost:8000` in a browser.
+
